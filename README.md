@@ -1,14 +1,13 @@
+Mavro official development tree
 
-NovaCoin official development tree
-
-NovaCoin - a hybrid scrypt PoW + PoS based cryptocurrency.
+Mavro - a hybrid scrypt PoW + PoS based cryptocurrency.
 
 * 10 minutes stake spacing
 * 30 minutes PoW spacing
 * Balanced PoW blocks and stakes weighting
 * The PoW subsidy halves every x64 multiply of PoW difficulty
 * The PoS interest halves every x64 multiply of PoS difficulty
-* Maximum PoW reward is 100 coins
+* Maximum PoW reward is 10 coins
 * Maximum PoS reward is 10 coins
 * ~ 2 billion total coins
 
@@ -25,7 +24,7 @@ or are controversial.
 
 The master branch is regularly built and tested, but is not guaranteed
 to be completely stable. Tags are regularly created to indicate new
-official, stable release versions of NovaCoin.
+official, stable release versions of Mavro.
 
 Feature branches are created when there are major new features being
 worked on by several people.

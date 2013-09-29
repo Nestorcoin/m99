@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -70,7 +71,7 @@ map<uint256, map<uint256, CDataStream*> > mapOrphanTransactionsByPrev;
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "NovaCoin Signed Message:\n";
+const string strMessageMagic = "Mavro Signed Message:\n";
 
 // Settings
 int64 nTransactionFee = MIN_TX_FEE;
@@ -477,8 +478,8 @@ bool CTransaction::CheckTransaction() const
         if (txout.IsEmpty() && !IsCoinBase() && !IsCoinStake())
             return DoS(100, error("CTransaction::CheckTransaction() : txout empty for user transaction"));
 
-        // NovaCoin: enforce minimum output amount for user transactions
-        // (and for all transactions until 20 Sep 2013)
+
+
         if ((!IsCoinBase() || nTime < CHAINCHECKS_SWITCH_TIME)
                 && (!txout.IsEmpty()) && txout.nValue < MIN_TXOUT_AMOUNT)
             return DoS(100, error("CTransaction::CheckTransaction() : txout.nValue below minimum"));
@@ -955,23 +956,36 @@ CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 }
 
 // miner's coin base reward based on nBits
-int64 GetProofOfWorkReward(unsigned int nBits)
+int64 GetProofOfWorkReward(unsigned int nBits, unsigned int nTime)
 {
-    CBigNum bnSubsidyLimit = MAX_MINT_PROOF_OF_WORK;
+    CBigNum bnSubsidyLimit;
+
+    if(!nTime)
+        nTime = GetLastBlockIndex(pindexBest, false)->nTime;
+
+    if(nTime > TIME_START_MAX_MINT){
+        bnSubsidyLimit = MAX_MINT_PROOF_OF_WORK;
+    }else if(nTime < TIME_START_GRAND_REWARD){
+        return 0;
+    }else if(nTime < TIME_START_REWARD){
+        return GRAND_REWARD;
+    }else{
+        bnSubsidyLimit = ((nTime-TIME_START_REWARD)/86400)*COIN;
+    }
 
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
     CBigNum bnTargetLimit = bnProofOfWorkLimit;
     bnTargetLimit.SetCompact(bnTargetLimit.GetCompact());
 
-    // NovaCoin: subsidy is cut in half every 64x multiply of PoW difficulty
+    // Mavro: subsidy is cut in half every 64x multiply of PoW difficulty
     // A reasonably continuous curve is used to avoid shock to market
     // (nSubsidyLimit / nSubsidy) ** 6 == bnProofOfWorkLimit / bnTarget
     //
     // Human readable form:
     //
-    // nSubsidy = 100 / (diff ^ 1/6)
-    CBigNum bnLowerBound = CENT;
+    // nSubsidy = 10 / (diff ^ 1/6)
+    CBigNum bnLowerBound = 1;
     CBigNum bnUpperBound = bnSubsidyLimit;
     while (bnLowerBound + CENT <= bnUpperBound)
     {
@@ -986,7 +1000,7 @@ int64 GetProofOfWorkReward(unsigned int nBits)
 
     int64 nSubsidy = bnUpperBound.getuint64();
 
-    nSubsidy = (nSubsidy / CENT) * CENT;
+    nSubsidy = nSubsidy;
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfWorkReward() : create=%s nBits=0x%08x nSubsidy=%"PRI64d"\n", FormatMoney(nSubsidy).c_str(), nBits, nSubsidy);
 
@@ -1008,7 +1022,7 @@ int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTi
         CBigNum bnTargetLimit = GetProofOfStakeLimit(0, nTime);
         bnTargetLimit.SetCompact(bnTargetLimit.GetCompact());
 
-        // NovaCoin: A reasonably continuous curve is used to avoid shock to market
+        // Mavro: A reasonably continuous curve is used to avoid shock to market
 
         CBigNum bnLowerBound = 1 * CENT, // Lower interest bound is 1% per year
             bnUpperBound = bnRewardCoinYearLimit, // Upper interest bound is 100% per year
@@ -1615,8 +1629,8 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     // Now that the whole chain is irreversibly beyond that time it is applied to all blocks except the
     // two in the chain that violate it. This prevents exploiting the issue against nodes in their
     // initial block download.
-    bool fEnforceBIP30 = true; // Always active in NovaCoin
-    bool fStrictPayToScriptHash = true; // Always active in NovaCoin
+    bool fEnforceBIP30 = true; // Always active in Mavro
+    bool fStrictPayToScriptHash = true; // Always active in Mavro
 
     //// issue here: it doesn't know the version
     unsigned int nTxPos;
@@ -2156,20 +2170,20 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
         if (!CheckCoinStakeTimestamp(GetBlockTime(), (int64)vtx[1].nTime))
             return DoS(50, error("CheckBlock() : coinstake timestamp violation nTimeBlock=%"PRI64d" nTimeTx=%u", GetBlockTime(), vtx[1].nTime));
 
-        // NovaCoin: check proof-of-stake block signature
+        // Mavro: check proof-of-stake block signature
         if (fCheckSig && !CheckBlockSignature(true))
             return DoS(100, error("CheckBlock() : bad proof-of-stake block signature"));
     }
     else
     {
         // Coinbase fee paid until 20 Sep 2013
-        int64 nFee = GetBlockTime() < CHAINCHECKS_SWITCH_TIME ? vtx[0].GetMinFee() - MIN_TX_FEE : 0;
+        //int64 nFee = GetBlockTime() < CHAINCHECKS_SWITCH_TIME ? vtx[0].GetMinFee() - MIN_TX_FEE : 0;
 
         // Check coinbase reward
-        if (vtx[0].GetValueOut() > (GetProofOfWorkReward(nBits) - nFee))
+        if (vtx[0].GetValueOut() > (GetProofOfWorkReward(nBits, nTime)/* - nFee*/))
             return DoS(50, error("CheckBlock() : coinbase reward exceeded (actual=%"PRI64d" vs calculated=%"PRI64d")",
                    vtx[0].GetValueOut(),
-                   GetProofOfWorkReward(nBits) - nFee));
+                   GetProofOfWorkReward(nBits, nTime)/* - nFee*/));
 
         // Should we check proof-of-work block signature or not?
         //
@@ -2183,7 +2197,7 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
             bool checkEntropySig = (GetBlockTime() < ENTROPY_SWITCH_TIME);
             bool checkPoWSig = (isAfterCheckpoint && GetBlockTime() < CHAINCHECKS_SWITCH_TIME);
 
-            // NovaCoin: check proof-of-work block signature
+            // Mavro: check proof-of-work block signature
             if ((checkEntropySig || checkPoWSig) && !CheckBlockSignature(false))
                 return DoS(100, error("CheckBlock() : bad proof-of-work block signature"));
         }
@@ -2260,10 +2274,10 @@ bool CBlock::AcceptBlock()
     bool cpSatisfies = Checkpoints::CheckSync(hash, pindexPrev);
 
     // Check that the block satisfies synchronized checkpoint
-    if (CheckpointsMode == Checkpoints::STRICT && !cpSatisfies)
+    if (CheckpointsMode == Checkpoints::POLICY_STRICT && !cpSatisfies)
         return error("AcceptBlock() : rejected by synchronized checkpoint");
 
-    if (CheckpointsMode == Checkpoints::ADVISORY && !cpSatisfies)
+    if (CheckpointsMode == Checkpoints::POLICY_ADVISORY && !cpSatisfies)
         strMiscWarning = _("WARNING: syncronized checkpoint violation detected, but skipped!");
 
     // Enforce rule that the coinbase starts with serialized block height
@@ -2638,7 +2652,7 @@ bool CheckDiskSpace(uint64 nAdditionalBytes)
         string strMessage = _("Warning: Disk space is low!");
         strMiscWarning = strMessage;
         printf("*** %s\n", strMessage.c_str());
-        uiInterface.ThreadSafeMessageBox(strMessage, "NovaCoin", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
+        uiInterface.ThreadSafeMessageBox(strMessage, "Mavro", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
         StartShutdown();
         return false;
     }
@@ -2696,10 +2710,10 @@ bool LoadBlockIndex(bool fAllowNew)
 {
     if (fTestNet)
     {
-        pchMessageStart[0] = 0xcd;
-        pchMessageStart[1] = 0xf2;
-        pchMessageStart[2] = 0xc0;
-        pchMessageStart[3] = 0xef;
+        pchMessageStart[0] = 0xFE;
+        pchMessageStart[1] = 0xEB;
+        pchMessageStart[2] = 0xDA;
+        pchMessageStart[3] = 0xED;
 
         bnProofOfWorkLimit = bnProofOfWorkLimitTestNet; // 16 bits PoW target limit for testnet
         nStakeMinAge = 2 * 60 * 60; // test net min age is 2 hours
@@ -2725,44 +2739,25 @@ bool LoadBlockIndex(bool fAllowNew)
             return false;
 
         // Genesis block
-
-        // MainNet:
-
-        //CBlock(hash=00000a060336cbb72fe969666d337b87198b1add2abaa59cca226820b32933a4, ver=1, hashPrevBlock=0000000000000000000000000000000000000000000000000000000000000000, hashMerkleRoot=4cb33b3b6a861dcbc685d3e614a9cafb945738d6833f182855679f2fad02057b, nTime=1360105017, nBits=1e0fffff, nNonce=1575379, vtx=1, vchBlockSig=)
-        //  Coinbase(hash=4cb33b3b6a, nTime=1360105017, ver=1, vin.size=1, vout.size=1, nLockTime=0)
-        //    CTxIn(COutPoint(0000000000, 4294967295), coinbase 04ffff001d020f274468747470733a2f2f626974636f696e74616c6b2e6f72672f696e6465782e7068703f746f7069633d3133343137392e6d736731353032313936236d736731353032313936)
-        //    CTxOut(empty)
-        //  vMerkleTree: 4cb33b3b6a
-
-        // TestNet:
-
-        //CBlock(hash=0000c763e402f2436da9ed36c7286f62c3f6e5dbafce9ff289bd43d7459327eb, ver=1, hashPrevBlock=0000000000000000000000000000000000000000000000000000000000000000, hashMerkleRoot=4cb33b3b6a861dcbc685d3e614a9cafb945738d6833f182855679f2fad02057b, nTime=1360105017, nBits=1f00ffff, nNonce=46534, vtx=1, vchBlockSig=)
-        //  Coinbase(hash=4cb33b3b6a, nTime=1360105017, ver=1, vin.size=1, vout.size=1, nLockTime=0)
-        //    CTxIn(COutPoint(0000000000, 4294967295), coinbase 04ffff001d020f274468747470733a2f2f626974636f696e74616c6b2e6f72672f696e6465782e7068703f746f7069633d3133343137392e6d736731353032313936236d736731353032313936)
-        //    CTxOut(empty)
-        //  vMerkleTree: 4cb33b3b6a
-
-        const char* pszTimestamp = "https://bitcointalk.org/index.php?topic=134179.msg1502196#msg1502196";
+        const char* pszTimestamp = "\x35\x31\x2e\x33\x38\x39\x35\x35\x33\xc2\xb0\x2f\x33\x30\x2e\x30\x39\x39\x31\x34\x37\xc2\xb0\x0a\x33\x37\x2e\x34\x32\xc2\xb0\x2f\x31\x34\x31\x2e\x30\x33\x32\x37\x37\x38\xc2\xb0\x0a\x32\x38\x2e\x37\x35\x35\x33\x38\x39\xc2\xb0\x2f\x38\x38\x2e\x33\x38\x37\x36\x38\x31\xc2\xb0\x0a\x44\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4f\x4d\x21";
         CTransaction txNew;
-        txNew.nTime = 1360105017;
+        txNew.nTime = 1377777777;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
-        txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(9999) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+        txNew.vin[0].scriptSig = CScript() << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         txNew.vout[0].SetEmpty();
         CBlock block;
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
-        block.nVersion = 1;
-        block.nTime    = 1360105017;
+        block.nVersion = 6;
+        block.nTime    = 1377777777;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = !fTestNet ? 1575379 : 46534;
+        block.nNonce   = 174592512 + 1371795200*!!fTestNet;
 
         //// debug print
-        assert(block.hashMerkleRoot == uint256("0x4cb33b3b6a861dcbc685d3e614a9cafb945738d6833f182855679f2fad02057b"));
         block.print();
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
-        assert(block.CheckBlock());
 
         // Start new block file
         unsigned int nFile;
@@ -2772,6 +2767,7 @@ bool LoadBlockIndex(bool fAllowNew)
         if (!block.AddToBlockIndex(nFile, nBlockPos))
             return error("LoadBlockIndex() : genesis block not accepted");
 
+        assert(block.CheckBlock());
         // ppcoin: initialize synchronized checkpoint
         if (!Checkpoints::WriteSyncCheckpoint((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet)))
             return error("LoadBlockIndex() : failed to init sync checkpoint");
@@ -2970,8 +2966,8 @@ string GetWarnings(string strFor)
 
     // * Should not enter safe mode for longer invalid chain
     // * If sync-checkpoint is too old do not enter safe mode
-    // * Display warning only in the STRICT mode
-    if (CheckpointsMode == Checkpoints::STRICT && Checkpoints::IsSyncCheckpointTooOld(60 * 60 * 24 * 10) &&
+    // * Display warning only in the POLICY_STRICT mode
+    if (CheckpointsMode == Checkpoints::POLICY_STRICT && Checkpoints::IsSyncCheckpointTooOld(60 * 60 * 24 * 10) &&
         !fTestNet && !IsInitialBlockDownload())
     {
         nPriority = 100;
@@ -3052,7 +3048,7 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
 // The message start string is designed to be unlikely to occur in normal data.
 // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
 // a large 4-byte int at any alignment.
-unsigned char pchMessageStart[4] = { 0xe4, 0xe8, 0xe9, 0xe5 };
+unsigned char pchMessageStart[4] = { 0xDE, 0xAD, 0xBE, 0xEF };
 
 bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 {

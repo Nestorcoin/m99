@@ -1,3 +1,4 @@
+# Copyright (c) 2013 The Mavro developers
 # Copyright (c) 2009-2010 Satoshi Nakamoto
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -87,7 +88,7 @@ OBJS= \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o
 
-all: novacoind.exe
+all: mavrod.exe
 
 #
 # LevelDB support
@@ -105,8 +106,8 @@ OBJS += obj/txdb-bdb.o
 endif
 
 
-test check: test_novacoin.exe FORCE
-	test_novacoin.exe
+test check: test_mavro.exe FORCE
+	test_mavro.exe
 
 obj/%.o: %.cpp $(HEADERS)
 	g++ -c $(CFLAGS) -o $@ $<
@@ -117,7 +118,7 @@ obj/scrypt-x86.o: scrypt-x86.S
 obj/scrypt-x86_64.o: scrypt-x86_64.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-novacoind.exe: $(OBJS:obj/%=obj/%)
+mavrod.exe: $(OBJS:obj/%=obj/%)
 	g++ $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
@@ -129,7 +130,7 @@ test_bitcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	g++ $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework $(LIBS)
 
 clean:
-	-del /Q novacoind test_novacoin
+	-del /Q mavrod test_mavro
 	-del /Q obj\*
 	-del /Q obj-test\*
 

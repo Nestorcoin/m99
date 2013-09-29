@@ -1,3 +1,4 @@
+// Copyright (c) 2013 Mavro Developers
 #include "signverifymessagedialog.h"
 #include "ui_signverifymessagedialog.h"
 
@@ -24,11 +25,11 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
 
 #if (QT_VERSION >= 0x040700)
     /* Do not move this to the XML file, Qt before 4.7 will choke on it */
-    ui->addressIn_SM->setPlaceholderText(tr("Enter a NovaCoin address (e.g. 4Zo1ga6xuKuQ7JV7M9rGDoxdbYwV5zgQJ5)"));
+    ui->addressIn_SM->setPlaceholderText(tr("Enter a Mavro address"));
     ui->signatureOut_SM->setPlaceholderText(tr("Click \"Sign Message\" to generate signature"));
 
-    ui->addressIn_VM->setPlaceholderText(tr("Enter a NovaCoin address (e.g. 4Zo1ga6xuKuQ7JV7M9rGDoxdbYwV5zgQJ5)"));
-    ui->signatureIn_VM->setPlaceholderText(tr("Enter NovaCoin signature"));
+    ui->addressIn_VM->setPlaceholderText(tr("Enter a Mavro address"));
+    ui->signatureIn_VM->setPlaceholderText(tr("Enter Mavro signature"));
 #endif
 
     GUIUtil::setupAddressWidget(ui->addressIn_SM, this);

@@ -1,5 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -288,13 +289,13 @@ Value getcheckpoint(const Array& params, bool fHelp)
     result.push_back(Pair("timestamp", DateTimeStrFormat(pindexCheckpoint->GetBlockTime()).c_str()));
 
     // Check that the block satisfies synchronized checkpoint
-    if (CheckpointsMode == Checkpoints::STRICT)
+    if (CheckpointsMode == Checkpoints::POLICY_STRICT)
         result.push_back(Pair("policy", "strict"));
 
-    if (CheckpointsMode == Checkpoints::ADVISORY)
+    if (CheckpointsMode == Checkpoints::POLICY_ADVISORY)
         result.push_back(Pair("policy", "advisory"));
 
-    if (CheckpointsMode == Checkpoints::PERMISSIVE)
+    if (CheckpointsMode == Checkpoints::POLICY_PERMISSIVE)
         result.push_back(Pair("policy", "permissive"));
 
     if (mapArgs.count("-checkpointkey"))

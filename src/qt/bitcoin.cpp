@@ -1,5 +1,6 @@
 /*
  * W.J. van der Laan 2011-2012
+ * The Mavro Developers 2013
  */
 #include "bitcoingui.h"
 #include "clientmodel.h"
@@ -83,7 +84,7 @@ static void InitMessage(const std::string &message)
 {
     if(splashref)
     {
-        splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(255,255,200));
+        splashref->showMessage(QString::fromStdString(message), Qt::AlignBottom|Qt::AlignHCenter, QColor(0,0,0));
         QApplication::instance()->processEvents();
     }
 }
@@ -106,7 +107,7 @@ static std::string Translate(const char* psz)
 static void handleRunawayException(std::exception *e)
 {
     PrintExceptionContinue(e, "Runaway exception");
-    QMessageBox::critical(0, "Runaway exception", BitcoinGUI::tr("A fatal error occurred. NovaCoin can no longer continue safely and will quit.") + QString("\n\n") + QString::fromStdString(strMiscWarning));
+    QMessageBox::critical(0, "Runaway exception", BitcoinGUI::tr("A fatal error occurred. Mavro can no longer continue safely and will quit.") + QString("\n\n") + QString::fromStdString(strMiscWarning));
     exit(1);
 }
 
@@ -134,7 +135,7 @@ int main(int argc, char *argv[])
     {
         // This message can not be translated, as translation is not initialized yet
         // (which not yet possible because lang=XX can be overridden in bitcoin.conf in the data directory)
-        QMessageBox::critical(0, "NovaCoin",
+        QMessageBox::critical(0, "Mavro",
                               QString("Error: Specified data directory \"%1\" does not exist.").arg(QString::fromStdString(mapArgs["-datadir"])));
         return 1;
     }
@@ -142,12 +143,12 @@ int main(int argc, char *argv[])
 
     // Application identification (must be set before OptionsModel is initialized,
     // as it is used to locate QSettings)
-    app.setOrganizationName("NovaCoin");
-    app.setOrganizationDomain("novacoin.su");
+    app.setOrganizationName("Mavro");
+    app.setOrganizationDomain("mavrocoin.org");
     if(GetBoolArg("-testnet")) // Separate UI settings for testnet
-        app.setApplicationName("NovaCoin-Qt-testnet");
+        app.setApplicationName("Mavro-Qt-testnet");
     else
-        app.setApplicationName("NovaCoin-Qt");
+        app.setApplicationName("Mavro-Qt");
 
     // ... then GUI settings:
     OptionsModel optionsModel;

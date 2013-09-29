@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2013 The PPCoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,16 +18,15 @@ typedef std::map<int, unsigned int> MapModifierCheckpoints;
 // Hard checkpoints of stake modifiers to ensure they are deterministic
 static std::map<int, unsigned int> mapStakeModifierCheckpoints =
     boost::assign::map_list_of
-        ( 0, 0x0e00670bu )
-        ( 9690, 0x97dcdafau )
-        ( 12661, 0x5d84115du )
-        ( 37092, 0xd230afccu )
+        ( 0,  0xe00670bu  )
+        ( 1,  0xbc4b99b6u )
+        ( 34, 0x43a6286fu )
     ;
 
 // Hard checkpoints of stake modifiers to ensure they are deterministic (testNet)
 static std::map<int, unsigned int> mapStakeModifierCheckpointsTestNet =
     boost::assign::map_list_of
-        ( 0, 0x0e00670bu )
+        ( 0, 0xfd11f4e7u )
     ;
 
 // Get the last stake modifier and its generation time from a given block

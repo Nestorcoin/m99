@@ -1,4 +1,5 @@
 # -*- mode: Makefile; -*-
+# Copyright (c) 2013 The Mavro developers
 # Copyright (c) 2011 Bitcoin Developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -121,7 +122,7 @@ ifneq (${USE_IPV6}, -)
 	DEFS += -DUSE_IPV6=$(USE_IPV6)
 endif
 
-all: novacoind
+all: mavrod
 
 #
 # LevelDB support
@@ -139,8 +140,8 @@ OBJS += obj/txdb-bdb.o
 endif
 
 
-test check: test_novacoin FORCE
-	./test_novacoin
+test check: test_mavro FORCE
+	./test_mavro
 
 # auto-generated dependencies:
 -include obj/*.P
@@ -164,7 +165,7 @@ obj/scrypt-x86.o: scrypt-x86.S
 obj/scrypt-x86_64.o: scrypt-x86_64.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-novacoind: $(OBJS:obj/%=obj/%)
+mavrod: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
@@ -176,11 +177,11 @@ obj-test/%.o: test/%.cpp
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-test_novacoin: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+test_mavro: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS) $(TESTLIBS)
 
 clean:
-	-rm -f novacoind test_novacoin
+	-rm -f mavrod test_mavro
 	-rm -f obj/*.o
 	-rm -f obj-test/*.o
 	-rm -f obj/*.P

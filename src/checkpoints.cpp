@@ -1,4 +1,5 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -39,16 +40,15 @@ namespace Checkpoints
     //
     static MapCheckpoints mapCheckpoints =
         boost::assign::map_list_of
-        ( 0, initCheckpoint(hashGenesisBlock, 1360105017) )
-        ( 9690, initCheckpoint(uint256("0x00000000026561450859c46868099e0df6068a538f038cb18988fd8d47dcdaf5"), 1362791423) )
-        ( 13560, initCheckpoint(uint256("0xa1591a0fcbf11f282d671581edb9f0aadcd06fee69761081e0a3245914c13729"), 1364674052) )
-        ( 37092, initCheckpoint(uint256("0x0000000000a38c2f98556f46793b453e92d8fab2d31c0b93fd08bcf78e56099d"), 1376677203) )
+        ( 0, initCheckpoint(hashGenesisBlock, 1377777777) )
+        ( 1, initCheckpoint(uint256("000006e56f999cef98aa53b4c1ef3927a2020a06ab2eda8a95029db7360a0eb9"), 1377781491))
+        ( 34, initCheckpoint(uint256("00000c68fffe4ce63ea8654056a0edfcacb6c9d40b5eea93760ebd0d8aac06dd"), 1380361034))
     ;
 
     // TestNet has no checkpoints
     static MapCheckpoints mapCheckpointsTestnet =
         boost::assign::map_list_of
-        ( 0, initCheckpoint(hashGenesisBlockTestNet, 1360105017) )
+        ( 0, initCheckpoint(hashGenesisBlockTestNet, 1377777777) )
         ;
 
     bool CheckHardened(int nHeight, const uint256& hash)
@@ -389,7 +389,7 @@ namespace Checkpoints
 }
 
 // ppcoin: sync-checkpoint master key
-const std::string CSyncCheckpoint::strMasterPubKey = "04a51b735f816de4ec3f891d5b38bbc91e1f7245c7c08d17990760b86b4d8fc3910a850ffecf73bfa8886f01739a0c4c4322201282d07b6e48ce931cc92af94850";
+const std::string CSyncCheckpoint::strMasterPubKey = "03f1a1a0c6a01d71d295b1feb42bf86280e41c77c1ec1c7be344f318963defd631";
 
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 

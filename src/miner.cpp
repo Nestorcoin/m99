@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2013 The NovaCoin developers
+// Copyright (c) 2013 The Mavro developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -376,17 +377,16 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake)
         if (fDebug && GetBoolArg("-printpriority"))
             printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
 
-        if (pblock->IsProofOfWork())
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pblock->nBits);
-
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
         if (pblock->IsProofOfStake())
             pblock->nTime      = pblock->vtx[1].nTime; //same as coinstake timestamp
         pblock->nTime          = max(pindexPrev->GetMedianTimePast()+1, pblock->GetMaxTransactionTime());
         pblock->nTime          = max(pblock->GetBlockTime(), pindexPrev->GetBlockTime() - nMaxClockDrift);
-        if (pblock->IsProofOfWork())
+        if (pblock->IsProofOfWork()){
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pblock->nBits, pblock->nTime);
             pblock->UpdateTime(pindexPrev);
+        }
         pblock->nNonce         = 0;
     }
 
@@ -539,7 +539,7 @@ void StakeMiner(CWallet *pwallet)
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
 
     // Make this thread recognisable as the mining thread
-    RenameThread("novacoin-miner");
+    RenameThread("mavro-miner");
 
     // Each thread has its own counter
     unsigned int nExtraNonce = 0;

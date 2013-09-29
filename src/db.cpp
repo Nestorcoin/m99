@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -125,9 +126,9 @@ bool CDBEnv::Open(boost::filesystem::path pathEnv_)
         if (nDeepReorg < 3)
         {
             if (nBlocks < 1)
-                strMessage = strprintf(_("Warning: DB_CONFIG has set_lk_max_locks %lu, which may be too low for a single block. If this limit is reached, NovaCoin may stop working."), (unsigned long)nMaxLocks);
+                strMessage = strprintf(_("Warning: DB_CONFIG has set_lk_max_locks %lu, which may be too low for a single block. If this limit is reached, Mavro may stop working."), (unsigned long)nMaxLocks);
             else
-                strMessage = strprintf(_("Warning: DB_CONFIG has set_lk_max_locks %lu, which may be too low for a common blockchain reorganization. If this limit is reached, NovaCoin may stop working."), (unsigned long)nMaxLocks);
+                strMessage = strprintf(_("Warning: DB_CONFIG has set_lk_max_locks %lu, which may be too low for a common blockchain reorganization. If this limit is reached, Mavro may stop working."), (unsigned long)nMaxLocks);
 
             strMiscWarning = strMessage;
             printf("*** %s\n", strMessage.c_str());

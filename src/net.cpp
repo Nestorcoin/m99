@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1061,7 +1062,7 @@ void ThreadMapPort2(void* parg)
             }
         }
 
-        string strDesc = "NovaCoin " + FormatFullVersion();
+        string strDesc = "Mavro " + FormatFullVersion();
 #ifndef UPNPDISCOVER_SUCCESS
         /* miniupnpc 1.5 */
         r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
@@ -1151,7 +1152,37 @@ void MapPort()
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strDNSSeed[][2] = {
-    {"novacoin.su", "dnsseed.novacoin.su"},
+	{"mavrocoin.com",		"seed.mavrocoin.com"},
+	{"mavrocoin.net",		"seed.mavrocoin.net"},
+	{"mavro-coin.com",		"seed.mavro-coin.com"},
+	{"mmm-coin.com",		"seed.mmm-coin.com"},
+	{"mvrstory.org",		"seed.mvrstory.org"},
+	{"super-ppl.com",		"seed.super-ppl.com"},
+	{"mavrocoin.org",		"seed.mavrocoin.org"},
+	{"super-people.org",	"seed.super-people.org"},
+	{"mleader.info", 		"seed.mleader.info"},
+	{"mavro-coin.org", 		"seed.mavro-coin.org"},
+	{"mavrocoin.org", 		"seed.mavrocoin.org"},
+	{"super-ppl.com", 		"seed1.super-ppl.com"},
+	{"mavrocoin.net", 		"seed1.mavrocoin.net"},
+	{"mmm-coin.com", 		"seed1.mmm-coin.com"},
+	{"mavro-coin.com", 		"seed1.mavro-coin.com"},
+	{"mvrstory.org", 		"seed1.mvrstory.org"},
+	{"super-people.org", 	"seed1.super-people.org"},
+	{"mavrocoin.com", 		"seed1.mavrocoin.com"},
+	{"mleader.info", 		"seed1.mleader.info"},
+	{"mavro-coin.org", 		"seed1.mavro-coin.org"},
+	{"mavrocoin.org", 		"seed1.mavrocoin.org"},
+	{"super-ppl.com", 		"seed2.super-ppl.com"},
+	{"mavrocoin.net", 		"seed2.mavrocoin.net"},
+	{"mmm-coin.com", 		"seed2.mmm-coin.com"},
+	{"mavro-coin.com", 		"seed2.mavro-coin.com"},
+	{"mvrstory.org", 		"seed2.mvrstory.org"},
+	{"super-people.org", 	"seed2.super-people.org"},
+	{"mavrocoin.com", 		"seed2.mavrocoin.com"},
+	{"mleader.info", 		"seed2.mleader.info"},
+	{"mavro-coin.org", 		"seed2.mavro-coin.org"},
+	{"mavrocoin.org", 		"seed2.mavrocoin.org"},
 };
 
 void ThreadDNSAddressSeed(void* parg)
@@ -1220,10 +1251,7 @@ void ThreadDNSAddressSeed2(void* parg)
 
 
 
-unsigned int pnSeed[] =
-{
-    0x90EF78BC, 0x33F1C851, 0x36F1C851, 0xC6F5C851,
-};
+unsigned int pnSeed[] = { 0xB675BA6A, 0x4FEA47D4, 0x52783AC6, 0xE6C21155, 0xAEEF78BC, 0x375C4C90, };
 
 void DumpAddresses()
 {
@@ -1748,7 +1776,7 @@ bool BindListenPort(const CService &addrBind, string& strError)
     {
         int nErr = WSAGetLastError();
         if (nErr == WSAEADDRINUSE)
-            strError = strprintf(_("Unable to bind to %s on this computer. NovaCoin is probably already running."), addrBind.ToString().c_str());
+            strError = strprintf(_("Unable to bind to %s on this computer. Mavro is probably already running."), addrBind.ToString().c_str());
         else
             strError = strprintf(_("Unable to bind to %s on this computer (bind returned error %d, %s)"), addrBind.ToString().c_str(), nErr, strerror(nErr));
         printf("%s\n", strError.c_str());

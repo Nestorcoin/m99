@@ -1,5 +1,6 @@
-NovaCoin 0.4.4 BETA
+Mavro 1.0.0
 
+Copyright (c) 2013 Mavro Developers
 Copyright (c) 2013 NovaCoin Developers
 Copyright (c) 2011-2013 PPCoin Developers
 Distributed under the MIT/X11 software license, see the accompanying
@@ -11,7 +12,7 @@ cryptographic software written by Eric Young (eay@cryptsoft.com).
 
 Intro
 -----
-NovaCoin is a free open source project derived from Bitcoin, with
+Mavro is a free open source project derived from Bitcoin, with
 the goal of providing a long-term energy-efficient scrypt-based crypto-currency.
 Built on the foundation of Bitcoin and PPCoin, innovations such as proof-of-stake and scrypt
 help further advance the field of crypto-currency.

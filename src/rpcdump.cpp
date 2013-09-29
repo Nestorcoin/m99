@@ -1,4 +1,5 @@
 // Copyright (c) 2009-2012 Bitcoin Developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -110,7 +111,7 @@ Value importprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "importprivkey <novacoinprivkey> [label]\n"
+            "importprivkey <mavroprivkey> [label]\n"
             "Adds a private key (as returned by dumpprivkey) to your wallet.");
 
     string strSecret = params[0].get_str();
@@ -234,15 +235,15 @@ Value dumpprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "dumpprivkey <novacoinaddress>\n"
-            "Reveals the private key corresponding to <novacoinaddress>.");
+            "dumpprivkey <mavroaddress>\n"
+            "Reveals the private key corresponding to <mavroaddress>.");
 
     EnsureWalletIsUnlocked();
 
     string strAddress = params[0].get_str();
     CBitcoinAddress address;
     if (!address.SetString(strAddress))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid NovaCoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Mavro address");
     if (fWalletUnlockMintOnly) // ppcoin: no dumpprivkey in mint-only mode
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Wallet is unlocked for minting only.");
     CKeyID keyID;
@@ -286,7 +287,7 @@ Value dumpwallet(const Array& params, bool fHelp)
     std::sort(vKeyBirth.begin(), vKeyBirth.end());
 
     // produce output
-    file << strprintf("# Wallet dump created by NovaCoin %s (%s)\n", CLIENT_BUILD.c_str(), CLIENT_DATE.c_str());
+    file << strprintf("# Wallet dump created by Mavro %s (%s)\n", CLIENT_BUILD.c_str(), CLIENT_DATE.c_str());
     file << strprintf("# * Created on %s\n", EncodeDumpTime(GetTime()).c_str());
     file << strprintf("# * Best block at time of backup was %i (%s),\n", nBestHeight, hashBestChain.ToString().c_str());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(pindexBest->nTime).c_str());

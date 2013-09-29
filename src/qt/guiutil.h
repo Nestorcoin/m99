@@ -1,3 +1,4 @@
+// Copyright (c) 2013 Mavro Developers
 #ifndef GUIUTIL_H
 #define GUIUTIL_H
 
@@ -30,7 +31,7 @@ namespace GUIUtil
     void setupAddressWidget(QLineEdit *widget, QWidget *parent);
     void setupAmountWidget(QLineEdit *widget, QWidget *parent);
 
-    // Parse "novacoin:" URI into recipient object, return true on successful parsing
+    // Parse "mavro:" URI into recipient object, return true on successful parsing
     // See Bitcoin URI definition discussion here: https://bitcointalk.org/index.php?topic=33490.0
     bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out);
     bool parseBitcoinURI(QString uri, SendCoinsRecipient *out);

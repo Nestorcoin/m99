@@ -1,3 +1,4 @@
+// Copyright (c) 2013 Mavro Developers
 #include "qrcodedialog.h"
 #include "ui_qrcodedialog.h"
 
@@ -83,7 +84,7 @@ void QRCodeDialog::genCode()
 
 QString QRCodeDialog::getURI()
 {
-    QString ret = QString("novacoin:%1").arg(address);
+    QString ret = QString("mavro:%1").arg(address);
     int paramCount = 0;
 
     ui->outUri->clear();

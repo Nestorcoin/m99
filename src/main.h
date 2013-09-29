@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 Mavro Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_MAIN_H
@@ -30,20 +31,24 @@ static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
 static const unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 static const unsigned int MAX_INV_SZ = 50000;
-static const int64 MIN_TX_FEE = CENT;
-static const int64 MIN_RELAY_TX_FEE = CENT;
+static const int64 MIN_TX_FEE = CENT/10;
+static const int64 MIN_RELAY_TX_FEE = CENT/10;
 static const int64 MAX_MONEY = 2000000000 * COIN;
-static const int64 MAX_MINT_PROOF_OF_WORK = 100 * COIN;
+static const int64 GRAND_REWARD = 1000000 * COIN;
+static const int64 MAX_MINT_PROOF_OF_WORK = 10 * COIN;
 static const int64 MAX_MINT_PROOF_OF_STAKE = 1 * COIN;
 static const int64 MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 
-static const unsigned int ENTROPY_SWITCH_TIME = 1362791041; // Sat, 09 Mar 2013 01:04:01 GMT
-static const unsigned int STAKE_SWITCH_TIME = 1371686400; // Thu, 20 Jun 2013 00:00:00 GMT
-static const unsigned int TARGETS_SWITCH_TIME = 1374278400; // Sat, 20 Jul 2013 00:00:00 GMT
-static const unsigned int CHAINCHECKS_SWITCH_TIME = 1379635200; // Fri, 20 Sep 2013 00:00:00 GMT
-static const unsigned int STAKECURVE_SWITCH_TIME = 1382227200; // Sun, 20 Oct 2013 00:00:00 GMT
-static const unsigned int STAKEWEIGHT_SWITCH_TIME = 1388534400; // Wed, 01 Jan 2014 00:00:00 GMT
+static const unsigned int ENTROPY_SWITCH_TIME = 0;
+static const unsigned int STAKE_SWITCH_TIME = 0;
+static const unsigned int TARGETS_SWITCH_TIME = 0;
+static const unsigned int CHAINCHECKS_SWITCH_TIME = 0;
+static const unsigned int STAKECURVE_SWITCH_TIME = 0;
+static const unsigned int STAKEWEIGHT_SWITCH_TIME = 1398475427;
 
+static const unsigned int TIME_START_GRAND_REWARD  = 1380287991;
+static const unsigned int TIME_START_REWARD        = 1380360817;
+static const unsigned int TIME_START_MAX_MINT      = 1381224817;
 
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
@@ -55,8 +60,8 @@ static const int fHaveUPnP = true;
 static const int fHaveUPnP = false;
 #endif
 
-static const uint256 hashGenesisBlock("0x00000a060336cbb72fe969666d337b87198b1add2abaa59cca226820b32933a4");
-static const uint256 hashGenesisBlockTestNet("0x000c763e402f2436da9ed36c7286f62c3f6e5dbafce9ff289bd43d7459327eb");
+static const uint256 hashGenesisBlock("0x000009135273c49c987453cb5c44bc727d17c7bfce080d9f67c08d742411b373");
+static const uint256 hashGenesisBlockTestNet("0x0000b78befd7c826d4cc16756d56f86523c480ff7b9397a01cdc6b74961c2f96");
 
 static const int64 nMaxClockDrift = 2 * 60 * 60;        // two hours
 
@@ -114,7 +119,7 @@ bool LoadExternalBlockFile(FILE* fileIn);
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits);
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake);
-int64 GetProofOfWorkReward(unsigned int nBits);
+int64 GetProofOfWorkReward(unsigned int nBits, unsigned int nTime=0);
 int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTime, bool bCoinYearOnly=false);
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime);
 unsigned int ComputeMinStake(unsigned int nBase, int64 nTime, unsigned int nBlockTime);
@@ -920,7 +925,7 @@ public:
     // ppcoin: entropy bit for stake modifier if chosen by modifier
     unsigned int GetStakeEntropyBit(unsigned int nTime) const
     {
-        // Protocol switch to support p2pool at novacoin block #9689
+
         if (nTime >= ENTROPY_SWITCH_TIME || fTestNet)
         {
             // Take last bit of block hash as entropy bit
@@ -929,7 +934,7 @@ public:
                 printf("GetStakeEntropyBit: nTime=%u hashBlock=%s nEntropyBit=%u\n", nTime, GetHash().ToString().c_str(), nEntropyBit);
             return nEntropyBit;
         }
-        // Before novacoin block #9689 - old protocol
+
         uint160 hashSig = Hash160(vchBlockSig);
         if (fDebug && GetBoolArg("-printstakemodifier"))
             printf("GetStakeEntropyBit: hashSig=%s", hashSig.ToString().c_str());
