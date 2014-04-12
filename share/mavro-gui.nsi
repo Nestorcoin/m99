@@ -1,15 +1,15 @@
-# Copyright (c) 2013 Mavro Developers
-
-Name Mavro
+# Copyright (c) 2014 Mavro Developers
 
 RequestExecutionLevel highest
 SetCompressor /SOLID lzma
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 1.0.0
+!define VERSION 1.1.0.5
 !define COMPANY "Mavro project"
 !define URL http://www.mavrocoin.org/
+
+Name "Mavro ${VERSION}"
 
 # MUI Symbol Definitions
 !define MUI_ICON "..\share\pixmaps\mavro.ico"
@@ -48,13 +48,13 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile mavro-1.0.0-win32-setup.exe
+OutFile mavro-1.1.0.5-win32-setup.exe
 InstallDir $PROGRAMFILES\Mavro
 CRCCheck on
 XPStyle on
 BrandingText " "
 ShowInstDetails show
-VIProductVersion 1.0.0
+VIProductVersion 1.1.0.5
 VIAddVersionKey ProductName Mavro
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"

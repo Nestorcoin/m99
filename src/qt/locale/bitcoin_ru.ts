@@ -16,8 +16,8 @@
     </message>
     <message>
         <location line="+41"/>
-        <source>Copyright © 2009-2013 The Mavro developers</source>
-        <translation>Все права защищены © 2009-2013 Разработчики Mavro</translation>
+        <source>Copyright © 2009-2014 The Mavro developers</source>
+        <translation>Все права защищены © 2009-2014 Разработчики Mavro</translation>
     </message>
     <message>
         <location line="+15"/>
