@@ -5,9 +5,9 @@ SetCompressor /SOLID lzma
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 1.1.0.5
+!define VERSION 1.2.0.1
 !define COMPANY "Mavro project"
-!define URL http://www.mavrocoin.org/
+!define URL http://www.mavroco.in/
 
 Name "Mavro ${VERSION}"
 
@@ -48,13 +48,13 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile mavro-1.1.0.5-win32-setup.exe
+OutFile mavro-1.2.0.1-win32-setup.exe
 InstallDir $PROGRAMFILES\Mavro
 CRCCheck on
 XPStyle on
 BrandingText " "
 ShowInstDetails show
-VIProductVersion 1.1.0.5
+VIProductVersion 1.2.0.1
 VIAddVersionKey ProductName Mavro
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"

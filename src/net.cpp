@@ -1152,6 +1152,8 @@ void MapPort()
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strDNSSeed[][2] = {
+	{"seed0.mavroco.in",		"seed0.mavroco.in"},
+	{"seed1.mavroco.in",		"seed1.mavroco.in"},
 	{"mavrocoin.com",		"seed.mavrocoin.com"},
 	{"mavrocoin.net",		"seed.mavrocoin.net"},
 	{"mavro-coin.com",		"seed.mavro-coin.com"},
@@ -1159,30 +1161,36 @@ static const char *strDNSSeed[][2] = {
 	{"mvrstory.org",		"seed.mvrstory.org"},
 	{"super-ppl.com",		"seed.super-ppl.com"},
 	{"mavrocoin.org",		"seed.mavrocoin.org"},
-	{"super-people.org",	"seed.super-people.org"},
+	{"super-people.org",		"seed.super-people.org"},
 	{"mleader.info", 		"seed.mleader.info"},
+	{"seed2.mavroco.in",		"seed2.mavroco.in"},
 	{"mavro-coin.org", 		"seed.mavro-coin.org"},
 	{"mavrocoin.org", 		"seed.mavrocoin.org"},
 	{"super-ppl.com", 		"seed1.super-ppl.com"},
 	{"mavrocoin.net", 		"seed1.mavrocoin.net"},
 	{"mmm-coin.com", 		"seed1.mmm-coin.com"},
 	{"mavro-coin.com", 		"seed1.mavro-coin.com"},
+	{"seed3.mavroco.in",		"seed3.mavroco.in"},
 	{"mvrstory.org", 		"seed1.mvrstory.org"},
-	{"super-people.org", 	"seed1.super-people.org"},
+	{"super-people.org", 		"seed1.super-people.org"},
 	{"mavrocoin.com", 		"seed1.mavrocoin.com"},
 	{"mleader.info", 		"seed1.mleader.info"},
 	{"mavro-coin.org", 		"seed1.mavro-coin.org"},
 	{"mavrocoin.org", 		"seed1.mavrocoin.org"},
 	{"super-ppl.com", 		"seed2.super-ppl.com"},
 	{"mavrocoin.net", 		"seed2.mavrocoin.net"},
+	{"seed4.mavroco.in",		"seed4.mavroco.in"},
 	{"mmm-coin.com", 		"seed2.mmm-coin.com"},
 	{"mavro-coin.com", 		"seed2.mavro-coin.com"},
 	{"mvrstory.org", 		"seed2.mvrstory.org"},
-	{"super-people.org", 	"seed2.super-people.org"},
+	{"super-people.org", 		"seed2.super-people.org"},
+	{"seed5.mavroco.in",		"seed5.mavroco.in"},
 	{"mavrocoin.com", 		"seed2.mavrocoin.com"},
 	{"mleader.info", 		"seed2.mleader.info"},
+	{"seed6.mavroco.in",		"seed6.mavroco.in"},
 	{"mavro-coin.org", 		"seed2.mavro-coin.org"},
 	{"mavrocoin.org", 		"seed2.mavrocoin.org"},
+	{"seed7.mavroco.in",		"seed7.mavroco.in"},
 };
 
 void ThreadDNSAddressSeed(void* parg)
@@ -1911,8 +1919,12 @@ void StartNode(void* parg)
         printf("Error; NewThread(ThreadDumpAddress) failed\n");
 
     // ppcoin: mint proof-of-stake blocks in the background
-    if (!NewThread(ThreadStakeMinter, pwalletMain))
-        printf("Error: NewThread(ThreadStakeMinter) failed\n");
+    if(GetBoolArg("-nominter")){
+	printf("ThreadStakeMinter disabled\n");
+    }else{
+	if (!NewThread(ThreadStakeMinter, pwalletMain))
+    	    printf("Error: NewThread(ThreadStakeMinter) failed\n");
+    }
 }
 
 bool StopNode()

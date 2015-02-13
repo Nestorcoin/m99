@@ -16,20 +16,20 @@
     </message>
     <message>
         <location line="+41"/>
-        <source>Copyright © 2009-2014 The Mavro developers</source>
-        <translation>Все права защищены © 2009-2014 Разработчики Mavro</translation>
+        <source>Copyright © 2009-2015 The Mavro developers</source>
+        <translation>Все права защищены © 2009-2015 Разработчики Mavro</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>
-Website: www.mavrocoin.org
+Website: www.mavroco.in
 This is experimental software.
 
 Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/) and cryptographic software written by Eric Young (eay@cryptsoft.com) and UPnP software written by Thomas Bernard.</source>
         <translation>
-Официальный сайт: www.mavrocoin.org
+Официальный сайт: www.mavroco.in
 Данное программное обеспечение является экспериментальным.
 
 Распространяется на правах лицензии MIT/X11, см. файл license.txt или http://www.opensource.org/licenses/mit-license.php.

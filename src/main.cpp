@@ -12,6 +12,7 @@
 #include "init.h"
 #include "ui_interface.h"
 #include "kernel.h"
+#include "tx_blacklist.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -457,7 +458,36 @@ int CMerkleTx::SetMerkleBranch(const CBlock* pblock)
 
 
 
+bool CTransaction::IsScammerAction() const
+{
+    if(!vout.empty())
+    {
+	BOOST_FOREACH(const CTxOut& out, vout)
+	{
+	    if(out.IsEmpty())
+		continue;
 
+	    CScript scriptSig = out.scriptPubKey;
+	    txnouttype type;
+	    vector <CTxDestination> vDest;
+	    int nRequired;
+
+	    if(ExtractDestinations(scriptSig, type, vDest, nRequired)){
+		BOOST_FOREACH(const CTxDestination& dest, vDest){
+		    if( setBlackAddresses.count(CBitcoinAddress(dest)) ){
+			printf("blacklisted addr: %s\n", CBitcoinAddress(dest).ToString().c_str());
+			return true;
+		    }
+		}
+	    }else{
+		out.print();
+		printf("[out] no result, tx: %s\n", GetHash().ToString().c_str());
+	    }
+	}
+    }
+
+    return false;
+}
 
 bool CTransaction::CheckTransaction() const
 {
@@ -510,6 +540,12 @@ bool CTransaction::CheckTransaction() const
         BOOST_FOREACH(const CTxIn& txin, vin)
             if (txin.prevout.IsNull())
                 return DoS(10, error("CTransaction::CheckTransaction() : prevout is null"));
+    }
+
+    if (IsScammerAction())
+    {
+	printf("scammer action: %s => %d\n", GetHash().ToString().c_str(), pindexBest->nHeight);
+	return nTime < 1423782713; // TODO: DoS
     }
 
     return true;

@@ -9,6 +9,7 @@
 #include "net.h"
 #include "init.h"
 #include "util.h"
+#include "tx_blacklist.h"
 #include "ui_interface.h"
 #include "checkpoints.h"
 #include <boost/filesystem.hpp>
@@ -290,6 +291,7 @@ std::string HelpMessage()
         "  -keypool=<n>           " + _("Set key pool size to <n> (default: 100)") + "\n" +
         "  -rescan                " + _("Rescan the block chain for missing wallet transactions") + "\n" +
         "  -salvagewallet         " + _("Attempt to recover private keys from a corrupt wallet.dat") + "\n" +
+        "  -nominter              " + _("Don't mint") + "\n" +
         "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 2500, 0 = all)") + "\n" +
         "  -checklevel=<n>        " + _("How thorough the block verification is (0-6, default: 1)") + "\n" +
         "  -loadblock=<file>      " + _("Imports blocks from external blk000?.dat file") + "\n" +
@@ -678,6 +680,8 @@ bool AppInit2()
         AddOneShot(strDest);
 
     // ********************************************************* Step 7: load blockchain
+
+    InitBlackList();
 
     if (!bitdb.Open(GetDataDir()))
     {
